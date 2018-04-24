@@ -25,6 +25,7 @@ public class WordPairs
 {
 
    DiGraph graph;
+   private int globalCount;
 
    /**
     * A constructor that initializes containers and animallist, and calls a createList method
@@ -33,7 +34,7 @@ public class WordPairs
    public WordPairs (String name)
    {
       graph = new DiGraph();
-   
+      globalCount = 0;
       createList(name);           
    
    }
@@ -77,8 +78,8 @@ public class WordPairs
             graph.addEdge(first, second);          
                               
          }
-           System.out.println(graph); 
-
+         //  System.out.println(graph); 
+      
       }
       catch(Exception x){
         /**
@@ -92,6 +93,10 @@ public class WordPairs
   * returns the shortest sequence of word pairs that begins with first and ends with last
   */
    public String wordChain(String first, String last){
+   
+   
+      bfs (first, last);
+      
       return "[]";
    }
   
@@ -104,18 +109,18 @@ public class WordPairs
    } 
    
    public int reachableFrom(String word){
-      return 0;
+      return bfs(word);
    
    }
 
    public int reachableFrom(String word, int maxLength){
-      return 0;
+      return bfs(word, maxLength);
    
    }
 
    public String reachableWords(String word, int maxLength)
    {
-      return "[]";
+      return bfss(word, maxLength);
    }
 
    public String cycle(String word){
@@ -123,6 +128,159 @@ public class WordPairs
    }
 
 
+   public void bfs(String vertex, String last){
+      int a = 0;
+      String removed;
+   
+      Set <String> visted = new HashSet<String>();
+      Set <String> vertices;
+      LinkedList <String> list = new LinkedList <String>();
+      
+      //words
+   //   Map <String, Set<String>> = new hashMap(); 
+      list.add(vertex);
+      visted.add(vertex);    
+      a++;
+      
+      while(!list.isEmpty())
+      {
+         removed = list.poll();
+         vertices = graph.getAdjacent(removed);
+         graph2.addVertex(removed);
 
+      
+         for(String each: vertices)
+         {
+            if(!visted.contains(each))
+            {
+               list.add(each);
+               visted.add(each);
+                 graph2.addVertex(each);
+               graph2.addEdge(removed, each); 
+              // System.out.println((a++)+". "+removed+" to "+each);
+            
+            }
+            if(each.equals(last))
+            {
+               list =  new LinkedList <String>();
+               break;
+            }
+          }     
+      }
+      
+     
+   }
+   
+   
+   public int bfs(String vertex){
+      int a = 0;
+      String removed;
+   
+      Set <String> visted = new HashSet<String>();
+      Set <String> vertices;
+      LinkedList <String> list = new LinkedList <String>();
+      
+      list.add(vertex);
+      visted.add(vertex);
+      a++;
+      
+      while(!list.isEmpty())
+      {
+         removed = list.poll();
+         vertices = graph.getAdjacent(removed);
+      
+         for(String each: vertices)
+         {
+            if(!visted.contains(each))
+            {
+               list.add(each);
+               visted.add(each);
+               a++;
+            }
+         
+         }     
+      
+      } 
+      return a;
+   }
+   
+   public int bfs(String vertex, int i){
+      int a = 0;
+      String removed;
+   
+      Set <String> visted = new HashSet<String>();
+      Set <String> vertices;
+      LinkedList <String> list = new LinkedList <String>();
+      
+      list.add(vertex);
+      visted.add(vertex);
+      a++;
+      
+      while(!list.isEmpty() && i >= 0)
+      {
+         removed = list.poll();
+         vertices = graph.getAdjacent(removed);
+         i--;
+         for(String each: vertices)
+         {
+            if(!visted.contains(each))
+            {
+               list.add(each);
+               visted.add(each);
+               a++;
+          }
+         }     
+      
+      } 
+      return a;
+   }
+   
+   public String bfss(String vertex, int i){
+      int a = 0;
+      String removed;
+      boolean child;
+      String word = "";
+      Set <String> visted = new HashSet<String>();
+      Set <String> vertices;
+      LinkedList <String> list = new LinkedList <String>();
+      
+      list.add(vertex);
+      visted.add(vertex);
+      a++;
+      word = "[" + vertex + "]";
+      
+      while(!list.isEmpty() && i >= 0)
+      {
+         removed = list.poll();
+         vertices = graph.getAdjacent(removed);
+         i--;
+         word += "\n[";
+         child = false;
+         for(String each: vertices)
+         {
+          
+            if(!visted.contains(each))
+            {
+               list.add(each);
+               visted.add(each);
+               a++;
+               word += each +", ";
+               child = true;
+            }
+          
+         } 
+         word = word.substring(0, word.length()-2);    
+         if(child)
+            word += "]";
+      } 
+      
+      
+      return word;
+   }
+   
+   
+   
+   
+   
 
 }
