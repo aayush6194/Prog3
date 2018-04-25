@@ -54,5 +54,10 @@ public class WordPairsTest
          System.out.println("There is no cycle from account to account");
       else
          System.out.println("The shortest cycle from account to account: " + cycle2);  
+         
+         
+     System.out.println(wp2.reachableFrom("dead", 7));
+    System.out.println("Words length = 2 from 'rule':\n" + wp.reachableFrom("rule", 2));
+
    }
 }
