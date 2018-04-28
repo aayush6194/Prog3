@@ -3,12 +3,11 @@
   * Course:  CSCI 3005
   * Date Due:  January 2018   
   * Instructor: Dr. Cordova              
-  * File name: AnimalTransport         
+  * File name: WordPairs         
   *
   * Program Description: This program  that a given a list of animals to be transported, finds the smallest
   *                      number of containers needed to complete the shipment. 
- 
-                         
+                          
   * Plagiarism Statement:
   * I swear that I have not received or given aid on this program
   * beyond guidelines of the course including giving or receiving
@@ -23,33 +22,35 @@ import java.io.*;
 
 public class WordPairs
 {
-
+   /**
+    * Declaring instance variable and DiGraph object
+    */ 
    DiGraph graph;
-   private int globalCount;
+   private String globalChain;
 
    /**
     * A constructor that initializes containers and animallist, and calls a createList method
     * @param filename, a string that is the name of file to be opened
     */
-   public WordPairs (String name)
-   {
+   public WordPairs (String name){
+     /**
+      * initilizing the object and variables and call to createList method
+      */
       graph = new DiGraph();
-      globalCount = 0;
-      createList(name);           
-   
+      globalChain = "";
+      createList(name);            
    }
    
    /**
-    * A createList method that reads from a file and stores the animal in the map
+    * A createList method that reads from a file and stores the word in the DiGraph object as vertices and creates
+    * edges.
     * @param filename, a string that is the name of file to be opened
     */  
-   public void createList(String filename)
-   {
+   public void createList(String filename){
     /**
      * Using try catch to catch any exceptions
      */  
       try{
-      
         /**
          * Creating file and scanner objects
          */ 
@@ -63,8 +64,7 @@ public class WordPairs
             /**
              * converting to lowercase and storing it in an array
              */ 
-            String line =   read.nextLine().toLowerCase();
-            String [] array = line.split(" ");
+            String [] array = (read.nextLine().toLowerCase()).split(" ");
             
             /**
              * Declaring variables and storing the words
@@ -72,14 +72,13 @@ public class WordPairs
             String first = array[0];
             String second = array[1];   
             
-            
+            /**
+             * Adding the vertices and connecting the edges
+             */ 
             graph.addVertex(first);
             graph.addVertex(second);
-            graph.addEdge(first, second);          
-                              
-         }
-         //  System.out.println(graph); 
-      
+            graph.addEdge(first, second);                               
+         }     
       }
       catch(Exception x){
         /**
@@ -90,405 +89,173 @@ public class WordPairs
    }
    
  /**
-  * returns the shortest sequence of word pairs that begins with first and ends with last
-  */
-   public String wordChain(String first, String last){
-   
-   
-          
-      return   bfs (first, last);
-   
+  * A wordChain method that takes first and last word and returns the shortest sequence of word chain 
+  * that begins with first and ends with last.
+  * @param first, a string that first starting node (word) or the root for the traversal 
+  * @param last, a string that last node (word) or the last child for the traversal 
+  * @return a string that is  shortest chain of word that begins with first and ends with last,using a certain format.
+  */    
+   public String wordChain(String first, String last){ 
+     /**
+      * Reseting the chain and call to breadth for search algorithm.
+      */    
+      globalChain = "";
+      bfs(first, last, -1);
+      return globalChain;
    }
-  
-   /**
-  *  returns the number of word pairs in theshortest chain that begins with first and ends with last. 
+     
+
+ /**
+  * A chainLength method that takes first and last word and returns number of words in the shortest sequence of word chain 
+  * that begins with first and ends with last.
+  * @param first, a string that first starting node (word) or the root for the traversal 
+  * @param last, a string that last node (word) or the last child for the traversal 
+  * @return the number of words pairs in the shortest chain that begins with first and ends with last.
   */
-   public int chainLength(String first, String last)
-   {
-      return  bfsi(first,  last);
+   public int chainLength(String first, String last){
+      return  bfs(first, last, -1);
    } 
    
+ /**
+  * A reachableForm method that takes word and returns number of distinct words in the chain from the traversal that begins with word. 
+  * that begins with first and ends with last.
+  * @param word, a string that first starting node (word) or the root for the traversal 
+  * @return the number of  distinct words  in the chain from the traversal that begins with word.
+  */   
    public int reachableFrom(String word){
-      return bfs(word);
-   
+      return reachableFrom(word, -1);
    }
 
+ /**
+  * A reachableForm method that takes word and max number of distinct words in the chain from the traversal that 
+  * begins with word and returns number of distinct words in the chain from the traversal that begins with word.
+  * that begins with first and ends with last.
+  * @param word, a string that first starting node (word) or the root for the traversal
+  * @param maxLength, an int that is max number of distinct words in the chain
+  * @return the number of  distinct words  in the chain from the traversal that begins with word.
+  */   
    public int reachableFrom(String word, int maxLength){
-      return bfs(word, maxLength);
-   
+      return bfs(word, null, maxLength);
    }
 
-   public String reachableWords(String word, int maxLength)
-   {
-      return bfss(word, maxLength);
+/**
+  * A reachableForm method that takes word and max number of distinct words in the chain from the traversal that 
+  * begins with word and returns distinct words in the chain from the traversal that begins with word that begins with first and ends with last.
+  * @param word, a string that first starting node (word) or the root for the traversal
+  * @param maxLength, an int that is max number of distinct words in the chain
+  * @return a string distinct words  in the chain from the traversal that begins with word.
+  */ 
+   public String reachableWords(String word, int maxLength){
+     /**
+      * Reseting the chain and call to breadth for search algorithm.
+      */
+      globalChain = "";
+      bfs(word, "-1", maxLength);
+      return globalChain;
    }
 
+ /**
+  * A cycle method that takes  word and returns the shortest sequence of word chain 
+  * that begins with word and also ends with word.
+  * @param word, a string that first starting node (word) or the root for the traversal, also the last node (word) or the last child for the traversal  
+  * @return a string that is  shortest chain of word pairs that begins with word and ends with word,using a certain format.
+  */ 
    public String cycle(String word){
-      return bfsc(word);
+     /**
+      * Reseting the chain and call to breadth for search algorithm.
+      */
+      globalChain = "";
+      bfs(word, word, 0);
+      return globalChain;
    }
-
-
-   public String bfs(String vertex, String last){
-      int a = 0, child = 0, base = 0;
-      String removed;
-      boolean found = false;
-      String f = vertex;
-      
-      Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      
-      //words
-      Map <String, String> amap = new HashMap <String, String>(); 
-      list.add(vertex);
-      visted.add(vertex);    
-      a++;
-      
-      
-      while(!list.isEmpty())
-      {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-         child = 0;
-      
-         for(String each: vertices)
-         {
-            if(!visted.contains(each))
-            {
-               list.add(each);
-               visted.add(each);
-               amap.put(each, removed);
-               child ++;
-            
-            
-            }
-            if(each.equals(last))
-            {
-               list =  new LinkedList <String>();
-               found = true;
-               break;
-            }
-         }     
-      }
-      
-      if(found)
-      {
-         String word = last;
-         String prev = "";
-         String total ="";
-         int count = 0;
-         while(found && !word.equals(f))
-         {
-            prev = word;
-            word = amap.get(word);
-            total =  word + " "+ prev  +"," +total; 
-            count++;     
-         
-         }
-      
-         total = "[" + total.substring(0, total.length()-1)+"]";
-      //    System.out.println(base);
-         return total; 
-        
-      }
-      else
-         return "[]";
      
-   }
-   
-   public int bfsi(String vertex, String last){
-      int a = 0, base = 0;
-      String removed;
-      boolean found = false;
-      String f = vertex;
-   
+ /**
+  * A bfs method that takes first and last word and returns number of words in the shortest sequence of word chain 
+  * that begins with first and ends with last.
+  * @param first, a string that first starting node (word) or the root for the traversal 
+  * @param last, a string that last node (word) or the last child for the traversal 
+  * @return the number of distint words or wordpairs in the shortest chain that begins with first and ends with last
+  */       
+   public int bfs(String vertex, String last, int maxLevel){
+   /**
+    * Declaring and initilizing variables and data structures objects
+    */       
+      String parent;
+      int reachedLevel = 1;
+      boolean reached = false, found = false, first = true;  
+      LinkedList <String> q = new LinkedList <String>();
+      
+      //wordChain
+      Map <String, Words> wordMap = new HashMap <String, Words>();
+      Map <Integer, Words> level = new HashMap <Integer, Words>(); 
       Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      
-      //words
-      Map <String, String> amap = new HashMap <String, String>(); 
-      list.add(vertex);
-      visted.add(vertex);    
-      a++;
-      
-      while(!list.isEmpty())
-      {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-                    // base++;
-      
-         for(String each: vertices)
-         {
-            if(!visted.contains(each))
-            {
-               list.add(each);
-               visted.add(each);
-               amap.put(each, removed);
-            
-            }
-            if(each.equals(last))
-            {
-               list =  new LinkedList <String>();
-               found = true;
-               break;
-            }
-         }     
-      }
-      String word = last;
-      String prev = "";
-      String total ="";
-      int count = 0;
-      while(found && !word.equals(f))
-      {
-         prev = word;
-         word = amap.get(word);
-         total =  word + ", "+ prev  +", " +total; 
-         count++;     
-      
-      }
-      
-      total = "[" + total.substring(0, total.length()-2)+"]";
-      //System.out.println(count);
-      return count;      
-     
-   }
-   
-   
-   public int bfs(String vertex){
-      int a = 0;
-      String removed;
-   
-      Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      
-      
-      list.add(vertex);
-      visted.add(vertex);
-      a++;
-      
-      while(!list.isEmpty())
-      {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-      
-         for(String each: vertices)
-         {
-            if(!visted.contains(each))
-            {
-               list.add(each);
-               visted.add(each);
-               a++;
-            }
+   /**
+    * Addting the first node to the data structures objects
+    */      
+      q.add(vertex);
+      if(!vertex.equals(last))
+         visted.add(vertex);
+      wordMap.put(vertex, new Words());
+      level.put(1, new Words(vertex));
          
-         }     
-      
-      } 
-      return a;
-   }
-   
-   public int bfs(String vertex, int i){
-      int a = 0, level = 0;
-     if (i == 1)
-      return graph.getAdjacent(vertex).size()+1;
-      String removed;
-      boolean reached = false;
-   
-      Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      Map <String, String> amap = new HashMap <String, String>(); 
-   
-      
-      list.add(vertex);
-      visted.add(vertex);
-      a++;
-      
-      while(!list.isEmpty() && !reached)
+   /**
+    * while loop iterates till the queue is empty or the last node is found or the desire level is reached
+    */   
+      while(  !q.isEmpty() && !reached)
       {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-         String last = "s";
-       
-         for(String each: vertices)
-         {
-            
-            if(!visted.contains(each))
-            {
-               list.add(each);
-               visted.add(each);
-               a++;
-               amap.put(each, removed);
-               last = each;
-            }
-             
-             
-         }   
-         int count = 0;
-         if ( level > 0 && visted.contains(last))
-         {
-            while (!last.equals(vertex))
-            {
-            
-               last = amap.get(last);
-               count++;
-            }
-         
-            reached = count == i;
+         parent = q.poll();
+         String currentChain = wordMap.get(parent).getChain();
+         int currentLevel = wordMap.get(parent).getLevel();
+      
+         if( (currentLevel -1 == maxLevel || (parent.equals(last)) && (!first))){ 
+            reachedLevel = currentLevel -1 ;
+            reached = true;
+            found = parent.equals(last);
          }
-         level++;
-         
-         // System.out.println(count);
-      
-      } 
-      return a;
-   }
-   
-   public String bfss(String vertex, int i){
-      int a = 0,level = 0;
-      String removed;
-      boolean child, reached = false;
-      String word = "";
-      Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      Map <String, String> amap = new HashMap <String, String>(); 
-   
-      
-      list.add(vertex);
-      visted.add(vertex);
-      a++;
-      word = "[" + vertex + "]";
-      
-      while(!list.isEmpty()&& !reached)
-      {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-           String last = "s";
-
-         if (vertices.size() > 0)
-            word += "\n[";
-         child = false;
-         
-         
-              Iterator<String> it = vertices.iterator();
-     while(it.hasNext()){
-      String each = it.next();
-            if(!visted.contains(each))
-            {
-               list.add(each);
-               visted.add(each);
-               a++;
-               if(it.hasNext())
-                  word += each +", ";
-               else
-                  word += each;
-              amap.put(each, removed);
-               last = each;
-            
-            }
-
-     }
-         
-      
-          int count = 0;
-         if ( level > 0 && visted.contains(last))
+         else                   
          {
-            while (!last.equals(vertex))
-            {
+            for(String each: graph.getAdjacent(parent)){
             
-               last = amap.get(last);
-               count++;
+               if(!visted.contains(each) ){
+                  q.add(each);          
+                  wordMap.put(each, new Words(currentLevel +1, currentChain, parent +" " +each));
+                  visted.add(each);               
+                  if(!level.containsKey(currentLevel+1))
+                     level.put(currentLevel+1, new Words(each));   
+                  else 
+                     level.get(currentLevel+1).addWord(each);               
+               }
+             
             }
-         
-            reached = count == i;
-         }
-         level++;
-  
-        //word = word.substring(0, word.length()-1);    
-        if(vertices.size() > 0)
-            word += "]";
-      } 
-      
-      
-      return word;
-   }
-   
-   
-   public String bfsc(String vertex){
-      int a = 0, base = 0;
-      String removed;
-      boolean found = false;
-      String f = vertex;
-   
-      Set <String> visted = new HashSet<String>();
-      Set <String> vertices;
-      LinkedList <String> list = new LinkedList <String>();
-      
-      //words
-      Map <String, String> amap = new HashMap <String, String>(); 
-      list.add(vertex);
-      visted.add(vertex);    
-      a++;
-      
-      while(!list.isEmpty())
-      {
-         removed = list.poll();
-         vertices = graph.getAdjacent(removed);
-                    // base++;
-      
-         for(String each: vertices)
-         {
-            if(!visted.contains(each) || each.equals(f))
-            {
-               list.add(each);
-               visted.add(each);
-               amap.put(each, removed);
-            //     System.out.println(each);
-            
-            }
-            if(each.equals(vertex) )
-            {
-               list =  new LinkedList <String>();
-               found = true;
-               break;
-            }
-         }     
+            first = false;
+         }         
       }
+          
+      if (last == (null))      
+         return wordMap.size();
       
-      if(found){
-         String word = vertex;
-         String prev = "";
-         String total ="";
-         int count = 0;
-         boolean done = false;
-         boolean first = true;
-         while(found && !done)
+      else if(last.equals("-1"))
+      {
+         globalChain = "";
+         for(int i = 1; i <= maxLevel+1; i++)
          {
-            prev = word;
-         
-            word = amap.get(word);
-            done = word.equals(f);
-            if(!first)
-               total =  word + " "+ prev  +"," +total; 
+            if(level.containsKey(i))
+               globalChain +=(Arrays.toString(level.get(i).getWordLevel())) +"\n";
             else
-               total =  word + " "+ prev  ;
-         
-            first = false;    
-            count++;     
-         
+               globalChain += "[]\n"; 
          }
-      
-         total = "[" + total+"]";
-         return total;   
+         return 0;
       }
-      else
-         return "[]";   
-     
+      else if(found)
+      {
+         globalChain = wordMap.get(last).getChain(); 
+         if(globalChain.length() > 0)
+            globalChain = "[" + globalChain.substring(0, globalChain.length()-1) + "]";
+            
+         return reachedLevel;
+      }
+      
+      globalChain = "[]";
+      return Integer.MAX_VALUE;
    }
-
-   
-   
-
 }

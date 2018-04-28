@@ -25,11 +25,11 @@ public class WordPairsTest
    {
       WordPairs wp = new WordPairs("wordpairs0.txt");
       
-      System.out.println("There are " + wp.chainLength("account", "steak") +
+      System.out.println("There are " + wp.chainLength("account", "loop") +
                          " pairs in the chain from 'account' to 'steak':\n" + 
-                         wp.wordChain("account", "steak"));
+                         wp.wordChain("account", "loop"));
       System.out.println("\nThere are " + wp.reachableFrom("book") + 
-                         " words reachable from book");
+                         " words reachable from book.");
       System.out.println("\nThere are " + wp.reachableFrom("book", 2) + 
                          " words reachable within 2 levels of book:\n" + 
                          wp.reachableWords("book", 2));
@@ -56,8 +56,11 @@ public class WordPairsTest
          System.out.println("The shortest cycle from account to account: " + cycle2);  
          
          
-     System.out.println(wp2.reachableFrom("dead", 7));
+     System.out.println(wp2.reachableWords("dead", 14));
     System.out.println("Words length = 2 from 'rule':\n" + wp.reachableFrom("rule", 2));
+     System.out.println("\nThere are " + wp2.reachableWords("poetic", 7) + 
+                         " words reachable from book");
+
 
    }
 }
