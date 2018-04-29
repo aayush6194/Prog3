@@ -1,7 +1,7 @@
 /**
   * Name: Aayush Shrestha 
   * Course:  CSCI 3005
-  * Date Due:  January 2018   
+  * Date Due:   May 4, 2018   
   * Instructor: Dr. Cordova              
   * File name: WordPairs         
   *
@@ -13,7 +13,7 @@
   */
   
 /**
- * This program  that a given a list of words and it's edges, finds the 
+ * Importing required libraries 
  */
 import java.util.*;
 import java.io.*;
@@ -182,14 +182,14 @@ public class WordPairs
       * Reseting the chain and call to breadth for search algorithm.
       */
       globalChain = "";
-      bfs(word, word, 0);
+      bfs(word, word, -1);
       return globalChain;
    }
      
  /**
   * A bfs method that takes first and last word and returns number of words in the shortest sequence of word chain 
   * that begins with first and ends with last.
-  * @param first, a string that first starting node (word) or the root for the traversal 
+  * @param vertex, a string that first starting node (word) or the root for the traversal 
   * @param last, a string that last node (word) or the last child for the traversal 
   * @param maxLevel, number of level till which the nodes are traversed
   * @return an int, that is the number of distint words or wordpairs in the shortest chain that begins with first and ends with last (if last exist)
@@ -202,33 +202,22 @@ public class WordPairs
       String parent;
       int reachedLevel = 1;
       boolean reached = false, found = false, first = true;  
-      LinkedList <String> q = new LinkedList <String>();
-   /**
-    * wordMap stores each word as string and it's length and chain. Level stores words in each level
-    */   
-      Map <String, Words> wordMap = new HashMap <String, Words>();
-      Map <Integer, Words> level = new HashMap <Integer, Words>(); 
-      //visted
+      WordChain w = new WordChain (vertex);
       Set <String> visted = new HashSet<String>();
-   /**
-    * Addting the first node to the data structures objects
-    */      
-      q.add(vertex);
+    
       if(!vertex.equals(last))
          visted.add(vertex);
-      wordMap.put(vertex, new Words());
-      level.put(1, new Words(vertex));
-         
+                    
    /**
     * while loop iterates till the queue is empty or the last node is found or the desire level is reached
     */   
-      while(!q.isEmpty() && !reached){      
+      while(!w.isEmpty() && !reached){      
         /**
          * Declaring and initilizing variables
          */   
-         parent = q.poll();
-         String currentChain = wordMap.get(parent).getChain();
-         int currentLevel = wordMap.get(parent).getLevel();
+         parent = w.poll();
+         String currentChain = w.getChain(parent);
+         int currentLevel = w.getLevel(parent);
       
          /**
          * checking for the end condition and setting the flags
@@ -239,7 +228,6 @@ public class WordPairs
             found = parent.equals(last);
          }
          else  {
-         
            /**
             * iterates the nearest child node
             */           
@@ -252,16 +240,8 @@ public class WordPairs
                /**
                 * adding the node to the queue, visted set, level and wordMap
                 */   
-                  q.add(each);          
-                  wordMap.put(each, new Words(currentLevel +1, currentChain, parent +" " +each));
-                  visted.add(each);    
-                /**
-                 * checking if level map has the key
-                 */                          
-                  if(!level.containsKey(currentLevel+1))
-                     level.put(currentLevel+1, new Words(each));   
-                  else 
-                     level.get(currentLevel+1).addWord(each);               
+                  visted.add(each);             
+                  w.add(each, currentLevel +1, currentChain + " " + parent + " " +each);               
                }
             }
             first = false;
@@ -272,26 +252,14 @@ public class WordPairs
       * last string is null when the end word is indefined and number of distinct word is returned
       */      
       if (last == (null))      
-         return wordMap.size();
+         return w.size();
       
      /**
       * last string is "-1" when the end word is indefined and globalChain is updated with distint words as each level and 0 is returned
       * It is done to  aviod unnecessarily updating the globalChain if the method does not require it
       */  
       else if(last.equals("-1")){
-         globalChain = "";      
-      /**
-       * iterates the each level of the map
-       */   
-         for(int i = 1; i <= maxLevel+1; i++){
-          /**
-           * if a level in a map isnt empty
-           */
-            if(level.containsKey(i))
-               globalChain +=(Arrays.toString(level.get(i).getWordLevel())) +"\n";
-            else
-               globalChain += "[]\n"; 
-         }
+         globalChain = w.getAllLevelsWords(maxLevel);      
          return 0;
       }
      /**
@@ -301,9 +269,9 @@ public class WordPairs
       /**
        * globalChain is updated with the chain of the last element and return the reachedLevel
        */ 
-         globalChain = wordMap.get(last).getChain(); 
+         globalChain = w.getChain(last); 
          if(globalChain.length() > 0)
-            globalChain = "[" + globalChain.substring(0, globalChain.length()-1) + "]";
+            globalChain = "[" + globalChain.substring(2, globalChain.length()-1) + "]";
             
          return reachedLevel;
       }
